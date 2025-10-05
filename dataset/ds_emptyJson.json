@@ -1,0 +1,21 @@
+{
+	"name": "ds_emptyJson",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage_ls",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "empty.json",
+				"folderPath": "Monitor",
+				"fileSystem": "adfdemo"
+			}
+		},
+		"schema": {}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

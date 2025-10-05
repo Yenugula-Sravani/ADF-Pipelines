@@ -1,0 +1,116 @@
+{
+	"name": "scdtype2_dataflow",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "customerDS",
+						"type": "DatasetReference"
+					},
+					"name": "sourcecsv"
+				},
+				{
+					"dataset": {
+						"referenceName": "customerSQL_DS",
+						"type": "DatasetReference"
+					},
+					"name": "sourceSQLTable"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "customerSQL_DS",
+						"type": "DatasetReference"
+					},
+					"name": "sinkSQL"
+				}
+			],
+			"transformations": [
+				{
+					"name": "AddingIsActive"
+				},
+				{
+					"name": "RenamingTheSQLTable"
+				},
+				{
+					"name": "lookup1"
+				},
+				{
+					"name": "filterExistingRecords"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          CustomerID as integer,",
+				"          Name as string,",
+				"          Email as string,",
+				"          City as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> sourcecsv",
+				"source(output(",
+				"          SurrogateKey as integer,",
+				"          CustomerID as integer,",
+				"          Name as string,",
+				"          Email as string,",
+				"          City as string,",
+				"          StartDate as timestamp,",
+				"          EndDate as timestamp,",
+				"          IsActive as boolean",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> sourceSQLTable",
+				"sourcecsv derive(isActive = 1) ~> AddingIsActive",
+				"sourceSQLTable select(mapColumn(",
+				"          SQL_SurrogateKey = SurrogateKey,",
+				"          SQL_CustomerID = CustomerID,",
+				"          SQL_Name = Name,",
+				"          SQL_Email = Email,",
+				"          SQL_City = City,",
+				"          StartDate,",
+				"          EndDate,",
+				"          SQL_IsActive = IsActive",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> RenamingTheSQLTable",
+				"sourcecsv, RenamingTheSQLTable lookup(CustomerID == SQL_CustomerID,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> lookup1",
+				"lookup1 filter(!isNull(SQL_CustomerID)) ~> filterExistingRecords",
+				"AddingIsActive sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          SurrogateKey as integer,",
+				"          CustomerID as integer,",
+				"          Name as string,",
+				"          Email as string,",
+				"          City as string,",
+				"          StartDate as timestamp,",
+				"          EndDate as timestamp,",
+				"          IsActive as boolean",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          CustomerID,",
+				"          Name,",
+				"          Email,",
+				"          City,",
+				"          IsActive = isActive",
+				"     )) ~> sinkSQL"
+			]
+		}
+	}
+}

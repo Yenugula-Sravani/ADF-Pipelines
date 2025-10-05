@@ -1,0 +1,9 @@
+{
+	"name": "scdpractice2025",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "5ecbcab8-f54f-4279-9718-c8cc1baeee36",
+		"tenantId": "de22f0ff-304a-4d91-ac2e-006a4dd5835c"
+	}
+}
