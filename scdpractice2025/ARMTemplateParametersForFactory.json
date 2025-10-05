@@ -1,0 +1,27 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "scdpractice2025"
+		},
+		"AzureDataLakeStorage_ls_accountKey": {
+			"value": ""
+		},
+		"AzureSqlDatabase_LS_password": {
+			"value": ""
+		},
+		"AzureDataLakeStorage_ls_properties_typeProperties_url": {
+			"value": "https://scdspractice2025.dfs.core.windows.net/"
+		},
+		"AzureSqlDatabase_LS_properties_typeProperties_server": {
+			"value": "scd.database.windows.net"
+		},
+		"AzureSqlDatabase_LS_properties_typeProperties_database": {
+			"value": "scd2025"
+		},
+		"AzureSqlDatabase_LS_properties_typeProperties_userName": {
+			"value": "sravani"
+		}
+	}
+}
